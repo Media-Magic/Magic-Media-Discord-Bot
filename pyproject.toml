@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "mediamagic"
+version = "0.1.0"
+description = ""
+authors = ["Known_Black_Hat <knownblackhat@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+disnake = "^2.9.2"
+httpx = "^0.27.0"
+aioshutil = "^1.4"
+aiofiles = "^23.2.1"
+m3u8 = "^5.0.0"
+streamlink = "^6.7.4"
+python-ffmpeg = "^2.0.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

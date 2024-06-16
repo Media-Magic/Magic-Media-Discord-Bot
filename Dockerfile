@@ -2,8 +2,6 @@ FROM python:3.12-slim
 
 ENV PIP_NO_CACHE_DIR=false
 
-RUN apt update && apt install -y libraqm*
-
 WORKDIR /app
 
 COPY . .

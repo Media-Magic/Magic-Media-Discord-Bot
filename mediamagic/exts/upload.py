@@ -25,6 +25,23 @@ class Upload(commands.Cog):
         self.bot = bot
         self.uploadservice = UploadService()
 
+    @commands.slash_command(name="nsfw_toggle")
+    async def nsfw_toggle(
+        self,
+        inter: disnake.GuildCommandInteraction,
+        channel_or_category: Union[disnake.TextChannel, disnake.CategoryChannel],
+        value: bool,
+    ) -> None:
+        await inter.response.defer()
+        if isinstance(channel_or_category, disnake.CategoryChannel):
+            for channel in channel_or_category.channels:
+                await channel.edit(nsfw=value)
+        else:
+            await channel_or_category.edit(nsfw=value)
+        await inter.send(
+            f"{channel_or_category.mention} is now {'' if value else 'not'} age-restriced!",
+        )
+
     async def serv(
         self,
         inter: disnake.GuildCommandInteraction,

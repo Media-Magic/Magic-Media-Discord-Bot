@@ -1,0 +1,23 @@
+version: "3.7"
+
+x-restart-policy: &restart_policy
+  restart: unless-stopped
+
+services:
+
+  bot:
+    <<: *restart_policy
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      - TOKEN=your_token_here
+      - NSFW_API=your_nsfw_api_url_here
+      - PREMIUM_SERVER_ID=your_premium_server_id_here
+      - PREMIUM_ROLE_ID=your_premium_role_id_here
+      - SUPPORT_SERVER_INVITE_CODE=your_support_server_invite_code_here
+
+    volumes:
+      - .:/app

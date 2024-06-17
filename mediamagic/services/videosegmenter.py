@@ -105,8 +105,6 @@ class VidSegmenter:
 
     async def segment(self, media: Path, save_dir: Path) -> Path:
         """Segments a video file into smaller parts."""
-        out_path = save_dir / media.stem
-        out_path.mkdir(parents=True, exist_ok=True)
 
         duration, size = await self.get_video_duration_size(media)
         segment_duration = (duration / size) * self.max_size
@@ -116,6 +114,8 @@ class VidSegmenter:
         elif segment_duration <= 0:
             raise ValueError("Max Size Is Too Low")
 
+        out_path = save_dir / media.stem
+        out_path.mkdir(parents=True, exist_ok=True)
         logger.debug(
             f"Trimming: {media.name} {self.max_size=} Mb {duration=} Minutes {size=} Mb duration={segment_duration / 60} mins outpath={out_path.absolute()}"
         )

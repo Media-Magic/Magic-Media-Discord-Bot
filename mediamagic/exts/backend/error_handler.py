@@ -223,6 +223,7 @@ class ErrorHandler(commands.Cog):
 
         if isinstance(ctx, commands.Context):
             components.insert_item(0, DeleteButton(ctx.author.id))
+            ctx.send_error = partial(ctx.send, components=components)  # type: ignore[reportAttributeAccessIssue]
         elif isinstance(ctx, disnake.Interaction):
             if ctx.response.is_done():
                 components.insert_item(0, DeleteButton(ctx.author.id))

@@ -116,20 +116,19 @@ class Recorder(commands.Cog):
             model_name="", out_dir=Path("."), client=httpx.AsyncClient()
         ).get_suggestions(name)
 
-    # @commands.command(name="record", aliases=["r"])
-    # @is_premium_user()
-    # async def pre_record(self, ctx: commands.GuildContext, model: str, quality: int):
-    #     """
-    #     Record the stream of the provided model
+    @commands.command(name="record", aliases=["r"])
+    @is_premium_user()
+    async def pre_record(self, ctx: commands.GuildContext, model: str):
+        """
+        Record the stream of the provided model
 
-    #     Parameters
-    #     ----------
-    #     model : The model name to record
-    #     quality: The quality of the stream to record
-    #     """
-    #     if model[0] == "'" and model[-1] == "'":
-    #         model = model[1:-1]
-    #     await self.record(ctx, model, quality)
+        Parameters
+        ----------
+        model : The model name to record
+        """
+        if model[0] == "'" and model[-1] == "'":
+            model = model[1:-1]
+        await self.record(ctx, model)
 
 
 def setup(client: MediaMagic) -> None:

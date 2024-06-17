@@ -6,7 +6,7 @@ from disnake.ext import commands
 from mediamagic.bot import MediaMagic
 
 logger = logging.getLogger(__name__)
-CUSTOM_DELETE_ID = "DELETE"
+CUSTOM_DELETE_ID = "DELETE:"
 
 
 class DeleteButtonListener(commands.Cog, slash_command_attrs={"dm_permission": False}):

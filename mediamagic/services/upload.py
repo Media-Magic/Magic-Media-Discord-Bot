@@ -146,4 +146,3 @@ class UploadService:
                     logger.error(f"Upload Failed {e} {sum(len_file)} {len_file=}")
 
             await aioshutil.rmtree(dir)
-            dir.rmdir()

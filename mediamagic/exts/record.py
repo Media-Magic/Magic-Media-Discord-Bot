@@ -62,7 +62,11 @@ class Recorder(commands.Cog):
                 view=RecorderView(recorder, inter.author.id),
             )
         logger.info(f"Recording {model}")
-        await recorder.record_stream()
+        try:
+            await recorder.record_stream()
+        except Exception as e:
+            logger.warning("Error occured in record stream")
+            await recorder.stop_recording()
         await inter.channel.send(
             f"Stream Duration: {(time.perf_counter() - start)/60:.2f}", delete_after=5
         )

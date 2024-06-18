@@ -85,7 +85,7 @@ class NsfwLiveCam:
             except Exception as e:
                 logger.error(f"{self.__qualname__} failed to record stream", exc_info=e)
             finally:
-                logger.info(f"Reloading stream of {self.model}")
+                logger.debug(f"Reloading stream of {self.model}")
 
     def write_stream(self, stream: Any) -> None:
         """Writes the stream to a file"""

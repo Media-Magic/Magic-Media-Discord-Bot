@@ -16,13 +16,16 @@ bot = commands.Bot(command_prefix="!", intents=disnake.Intents.all())
 
 def setup_logging() -> None:
     os.makedirs("logs", exist_ok=True)
-    file_handler = logging.FileHandler(Client.log_file_name, mode="w")
+    # file_handler = logging.FileHandler(Client.log_file_name, mode="w")
+    file_handler = logging.handlers.RotatingFileHandler(
+        Client.log_file_name, mode="a", maxBytes=(1000000 * 20), backupCount=5
+    )
     console_handler = logging.StreamHandler()
 
     file_handler.setLevel(logging.DEBUG)
     console_handler.setLevel(logging.INFO)
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format="[%(levelname)s|%(module)s|%(funcName)s|L%(lineno)d] %(asctime)s: %(message)s",
         datefmt="%Y-%m-%dT%H:%M:%S%z",
         handlers=[console_handler, file_handler],

@@ -50,6 +50,7 @@ class Recorder(commands.Cog):
             model_name=model, out_dir=Path("."), client=httpx.AsyncClient()
         )
         start = time.perf_counter()
+        msg = None
         if isinstance(inter, disnake.ApplicationCommandInteraction):
             await inter.send(
                 await recorder.get_thumbnail(),
@@ -70,20 +71,13 @@ class Recorder(commands.Cog):
         await inter.channel.send(
             f"Stream Duration: {(time.perf_counter() - start)/60:.2f}", delete_after=5
         )
-
         try:
+
             await self.uploadservice.upload(
                 inter,
                 Path(recorder.filename),
                 float((inter.guild.filesize_limit / 1024**2) - 1),
             )
-        except ModelOffline:
-            if isinstance(inter, disnake.ApplicationCommandInteraction):
-                await inter.edit_original_response(
-                    "Model Is Currenlty Offline or in Private Show"
-                )
-            else:
-                await msg.edit("Model Is Currenlty Offline or in Private Show")
         except Exception as e:
             logger.error("Unable to upload", exc_info=e)
         else:
@@ -111,7 +105,7 @@ class Recorder(commands.Cog):
             await self.record(inter, model)
         except ModelOffline:
             await inter.edit_original_response(
-                "Model Is Currenlty Offline or in Private Show"
+                "Model is currenlty offline or in private show!"
             )
 
     @slash_record.autocomplete("model")
@@ -132,7 +126,10 @@ class Recorder(commands.Cog):
         """
         if model[0] == "'" and model[-1] == "'":
             model = model[1:-1]
-        await self.record(ctx, model)
+        try:
+            await self.record(ctx, model)
+        except ModelOffline:
+            await ctx.send("Model is currenlty offline or in private show!")
 
 
 def setup(client: MediaMagic) -> None:

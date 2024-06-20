@@ -10,7 +10,7 @@ from streamlink.session.session import Streamlink
 
 from mediamagic.exceptions import ModelOffline
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("striplivecam")
 
 
 class NsfwLiveCam:

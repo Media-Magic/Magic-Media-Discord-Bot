@@ -6,7 +6,7 @@ from typing import Optional, Set
 
 import httpx
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("terabox")
 
 
 class TeraExtractor:

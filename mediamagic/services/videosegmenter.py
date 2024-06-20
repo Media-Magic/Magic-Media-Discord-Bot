@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 from ffmpeg.asyncio import FFmpeg
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("videosegmenter")
 
 
 class VidSegmenter:

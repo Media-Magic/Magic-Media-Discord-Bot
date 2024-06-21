@@ -23,7 +23,8 @@ logger = logging.getLogger(__name__)
 
 class Upload(commands.Cog):
     def __init__(self, bot: MediaMagic) -> None:
-        self.queue = asyncio.Queue()  # Data: (function, guild_id, interaction)
+        # FIFO Queue Data: (function, guild_id, interaction)
+        self.queue = asyncio.Queue()
         self.bot = bot
         self.uploadservice = UploadService()
         self.active_producer = set()
@@ -84,117 +85,6 @@ class Upload(commands.Cog):
             f"{channel_or_category.mention} is now {'' if value else 'not'} age-restriced!",
         )
 
-    async def serv_v1(
-        self,
-        inter: disnake.GuildCommandInteraction,
-        attachment: Union[disnake.Attachment, Path],
-        channel: Optional[Union[disnake.TextChannel, disnake.ThreadWithMessage]] = None,
-        sequential_upload: bool = True,
-    ):
-        """
-        Serves the provided attachment
-
-        Parameters
-        ----------
-        attachment : The text file containing the links to download
-        channel : The channel to upload the files
-        sequential_upload : Whether to upload the files sequentially or concurrently
-        """
-        logger.debug(f"Serv started {attachment=} {channel=}")
-        if isinstance(attachment, Path):
-            url_buff = attachment.read_text()
-        else:
-            await inter.send(
-                "Your upload is being queued, Upload will be completed soon!",
-                ephemeral=True,
-            )
-            url_buff = (await attachment.read()).decode("utf-8")
-        url_list = url_buff.split("\n")
-        url_set = {x for x in url_list if x}
-        tera_set = {x for x in url_set if x.startswith("https://terabox")}
-        url_set = url_set - tera_set
-
-        logger.debug(f"TeraBox Links {len(tera_set)=}")
-        if tera_set:
-            async with httpx.AsyncClient(
-                timeout=httpx.Timeout(None, read=None),
-                follow_redirects=True,
-                limits=httpx.Limits(max_connections=10),
-            ) as client:
-                extractor = TeraExtractor(
-                    tera_set,
-                    "Magic Browser",
-                    client,
-                )
-                data = await extractor()
-                logger.info(f"Resolved TeraBox Links {len(data)=}")
-                url_set.update({url.fast_link for url in data if url is not None})
-
-        url_list = list(url_set)
-        # Batches urls into groups
-        url_grp = [url_list[i : i + 100] for i in range(0, len(url_list), 100)]
-        logger.info(f"Url Group {len(url_grp)=}")
-        for idx, url in enumerate(url_grp, 1):
-            url = set(url)
-
-            # for every url group _dwnld is called,
-            # then a group is passed to Adownloader on by one
-            async def _dwnld(urls: Set, final: bool = False):
-                downloader = Adownloader(urls=urls)
-                destination = await downloader.download()
-                # After downloading a group we upload them via task or await
-
-                async def _upload():
-                    logger.info(f"Uploading from {destination}")
-                    try:
-                        await self.uploadservice.upload(
-                            inter,
-                            destination,
-                            # For safe side we decrease discord file size limit by 1
-                            float((inter.guild.filesize_limit / 1024**2) - 1),
-                            channel=channel,
-                        )
-                    except Exception:
-                        logger.error("Upload Failed")
-                        return
-                    logger.info(f"Upload Sequence {idx}/{len(url_grp)} Completed")
-                    (
-                        logger.info(
-                            f"Upload Completed {inter.guild_id} -> {inter.guild.name}"
-                        )
-                        if final
-                        else None
-                    )
-                    # if this function is called as helper then this check will fail
-                    if not isinstance(attachment, Path):
-                        if final:
-                            try:
-                                await inter.author.send(
-                                    f"{len(set(url_list))} Upload completed in {inter.channel.mention}",  # type: ignore
-                                    allowed_mentions=disnake.AllowedMentions(),
-                                )
-                            finally:
-                                await inter.channel.send(
-                                    f"{inter.author.mention} {len(set(url_list))} Upload completed",
-                                    allowed_mentions=disnake.AllowedMentions(),
-                                    delete_after=5,
-                                )
-
-                if sequential_upload:
-                    logger.info("Doing Sequential Upload")
-                    await _upload()
-                else:
-                    logger.info("Doing Concurrent Upload")
-                    asyncio.create_task(_upload())
-
-            # Puts downloader with uploader function in queue
-            func = functools.partial(_dwnld, url, idx == len(url_grp))
-            await self.queue.put((func, inter.guild.id))  # Producer
-        # Create consumer task for this guild and put it in active producer set
-        if not inter.guild.id in self.active_producer:
-            self.active_producer.add(inter.guild.id)
-            asyncio.create_task(self.consumer(inter.guild.id))
-
     @commands.slash_command(name="upload", dm_permission=False)
     @is_premium_owner()
     async def serve(
@@ -211,7 +101,7 @@ class Upload(commands.Cog):
         Parameters
         ----------
         attachment : The text file containing the links to download
-        direct_or_terabox_link : The direct/terabox link to download the media
+        direct_or_terabox_link : The direct/terabox link to download the media (use , for multiple links)
         channel : The channel to upload the files
         sequential_upload : Whether to upload the files sequentially or concurrently
         """
@@ -226,8 +116,25 @@ class Upload(commands.Cog):
         elif attachment:
             final = attachment
         else:
-            raise commands.CommandError("Should not raise this error")
+            raise commands.CommandError("Should not be raised this error")
         await self.serv(inter, final, channel, sequential_upload)
+
+    @commands.slash_command(name="terabox")
+    async def terabox(self, inter: disnake.GuildCommandInteraction, link: str) -> None:
+        """
+        Resolve and upload terabox link in channel
+
+        Parameters
+        ----------
+        link : The terabox link to resolve and upload (use , for multiple links)
+        """
+        if not link.startswith("http"):
+            raise commands.CommandError("Invalid link")
+        await inter.send(
+            "Your upload is being queued, Upload will be completed soon!",
+            ephemeral=True,
+        )
+        await self.serv(inter, link)
 
     async def serv(
         self,
@@ -248,7 +155,7 @@ class Upload(commands.Cog):
         if isinstance(attachment, Path):
             url_buff = attachment.read_text()
         elif isinstance(attachment, str):
-            url_buff = attachment
+            url_buff = attachment.replace(",", "\n")
         else:
             await inter.send(
                 "Your upload is being queued, Upload will be completed soon!",
@@ -302,10 +209,8 @@ class Upload(commands.Cog):
                             float((inter.guild.filesize_limit / 1024**2) - 1),
                             channel=channel,
                         )
-                    except Exception:
-                        logger.error("Upload Failed")
-                        return
-                    logger.info(f"Upload Sequence {idx}/{len(url_grp)} Completed")
+                    except Exception as e:
+                        logger.error("Upload Failed", exc_info=e)
 
                 if sequential_upload:
                     logger.info("Doing Sequential Upload")

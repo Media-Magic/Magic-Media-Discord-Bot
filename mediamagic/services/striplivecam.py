@@ -79,7 +79,12 @@ class NsfwLiveCam:
             session.set_option("ffmpeg-start-at-zero", True)
             session.set_option("stream-segment-threads", 20)
             qualities = await self.quality(metadata["master_url"])
-            highest_quality = list(qualities.items())[0][1]
+            if qualities.get(960):
+                highest_quality = qualities[960]
+            elif qualities.get(720):
+                highest_quality = qualities[720]
+            else:
+                highest_quality = list(qualities.items())[0][1]
             stream = session.streams(f"hlsvariant://{highest_quality}")["best"]
             logger.info(f"Recording {self.model} using {highest_quality}")
             loop = asyncio.get_running_loop()

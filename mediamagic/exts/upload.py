@@ -12,7 +12,7 @@ import httpx
 from disnake.ext import commands
 
 from mediamagic.bot import MediaMagic
-from mediamagic.checks import is_premium_owner
+from mediamagic.checks import is_premium_owner, is_premium_user
 from mediamagic.constants import Client
 from mediamagic.services.adownloader import Adownloader
 from mediamagic.services.terabox import TeraExtractor
@@ -120,6 +120,7 @@ class Upload(commands.Cog):
         await self.serv(inter, final, channel, sequential_upload)
 
     @commands.slash_command(name="terabox")
+    @is_premium_user()
     async def terabox(self, inter: disnake.GuildCommandInteraction, link: str) -> None:
         """
         Resolve and upload terabox link in channel

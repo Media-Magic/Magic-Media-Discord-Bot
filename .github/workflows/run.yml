@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: admin
 
     steps:
     - name: Login to GHCR

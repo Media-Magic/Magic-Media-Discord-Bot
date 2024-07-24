@@ -12,3 +12,4 @@ class Client:
     token = os.getenv("TOKEN")
     command_prefix = "!"
     nsfw_api = os.getenv("NSFW_API")
+    url_group_limit = 100  # mediamagic/exts/upload.py L243

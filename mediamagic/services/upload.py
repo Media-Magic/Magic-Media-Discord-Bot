@@ -12,7 +12,7 @@ from disnake.ext import commands
 from mediamagic.services.videosegmenter import VidSegmenter
 from mediamagic.utils.helper import move_files_to_root
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("upload_service")
 
 
 class UploadService:

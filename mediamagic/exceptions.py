@@ -3,17 +3,23 @@ from disnake.ext import commands
 
 class ModelOffline(Exception):
     """
-    Raised When Model id offline
+    Raised when model id offline
     """
 
 
 class Premium_Owner(commands.errors.CheckFailure):
     """
-    Raised when Premium User isn't the owner of the current server
+    Raised when premium user isn't the owner of the current server
     """
 
 
 class NotPremium(commands.errors.CheckFailure):
     """
-    Raised when User isn't premium
+    Raised when user isn't premium
+    """
+
+
+class NotVoted(commands.errors.CheckFailure):
+    """
+    Raised when user didn't voted
     """

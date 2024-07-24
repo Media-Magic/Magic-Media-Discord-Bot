@@ -13,7 +13,7 @@ from ffmpeg.asyncio import FFmpeg
 
 class Adownloader:
     def __init__(
-        self, urls: Set, logger: logging.Logger = logging.getLogger(__name__)
+        self, urls: Set, logger: logging.Logger = logging.getLogger("adownloader")
     ) -> None:
         self._downloaded = set()
         self.urls = {x.strip() for x in urls}
@@ -48,7 +48,7 @@ class Adownloader:
                     self.logger.critical(
                         f"Server returned {response.status_code} for {url}"
                     )
-                    Path(file_name).unlink()
+                    file_name.unlink()
             self._downloaded.add(url)
         except Exception:
             self.logger.exception(f"Error while downloading {url}")

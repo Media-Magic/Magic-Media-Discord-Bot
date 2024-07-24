@@ -1,0 +1,13 @@
+name: Bot Runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Run Container
+      run: |
+        docker run -i  -e TOKEN=${{ secrets.token }} ghcr.io/${{ github.repository }}/Magic-Media-Discord-Bot:latest

@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import dataclasses
 import logging
@@ -6,7 +7,7 @@ from typing import Optional, Set
 
 import httpx
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("terabox")
 
 
 class TeraExtractor:
@@ -54,12 +55,13 @@ class TeraExtractor:
 if __name__ == "__main__":
 
     async def main():
-        _usage = f"Usage: {sys.argv[0]} <url1> <url2> ..."
-        if len(sys.argv) > 1:
-            urls = set(sys.argv[1:])
-        else:
-            print(_usage)
-            sys.exit(1)
+        parser = argparse.ArgumentParser(
+            usage=f"{sys.argv[0]} <url1> <url2> ...",
+            description="Resolves terabox links to direct links",
+        )
+        parser.add_argument("terabox_urls", nargs="+", help="Terabox links to resolve")
+        args = parser.parse_args()
+        urls = set(args.terabox_urls)
 
         async with httpx.AsyncClient(
             timeout=httpx.Timeout(None),

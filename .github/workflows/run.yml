@@ -7,8 +7,8 @@ jobs:
   run:
     runs-on: ubuntu-latest
 
-  permissions:
-    contents: read
+    permissions:
+      contents: read
 
     steps:
     - name: Run Container

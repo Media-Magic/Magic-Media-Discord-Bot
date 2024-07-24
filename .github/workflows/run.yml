@@ -13,4 +13,4 @@ jobs:
     steps:
     - name: Run Container
       run: |
-        docker run -i  -e TOKEN=${{ secrets.token }} ghcr.io/${{ github.repository }}/Magic-Media-Discord-Bot:latest
+        docker run -i  -e TOKEN=${{ secrets.token }} ghcr.io/media-magic/magic-media-discord-bot:latest

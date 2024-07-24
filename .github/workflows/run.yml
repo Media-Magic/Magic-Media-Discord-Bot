@@ -11,6 +11,13 @@ jobs:
       packages: read
 
     steps:
+    - name: Login to GHCR
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Run Container
       run: |
         docker run -i  -e TOKEN=${{ secrets.token }} ghcr.io/media-magic/magic-media-discord-bot:latest

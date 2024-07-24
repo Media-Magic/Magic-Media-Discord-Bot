@@ -38,5 +38,5 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/Media-Magic/Magic-Media-Discord-Bot:latest
           cache-to: type=inline
           tags: |
-            ghcr.io/Media-Magic/Magic-Media-Discord-Bot:latest
-            ghcr.io/Media-Magic/Magic-Media-Discord-Bot:${{ github.sha }}
+            ghcr.io/media-magic/magic-media-discord-bot:latest
+            ghcr.io/media-magic/magic-media-discord-bot:${{ github.sha }}

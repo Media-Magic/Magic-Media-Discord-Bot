@@ -6,6 +6,10 @@ on:
     branches:
       - 'main'
 
+permissions:
+  read-all
+
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest

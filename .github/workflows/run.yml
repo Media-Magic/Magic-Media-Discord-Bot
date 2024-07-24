@@ -3,6 +3,9 @@ name: Bot Runner
 on:
   workflow_dispatch:
 
+permissions:
+  read-all
+
 jobs:
   run:
     runs-on: ubuntu-latest

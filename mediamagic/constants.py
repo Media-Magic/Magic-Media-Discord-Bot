@@ -13,3 +13,7 @@ class Client:
     command_prefix = "!"
     nsfw_api = os.getenv("NSFW_API")
     url_group_limit = 100  # mediamagic/exts/upload.py L243
+
+
+class BinPath:
+    segmenter = "./videosegmenter"

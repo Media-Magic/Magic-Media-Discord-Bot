@@ -5,6 +5,8 @@ from typing import List, Tuple
 
 from ffmpeg.asyncio import FFmpeg
 
+from mediamagic.constants import BinPath
+
 logger = logging.getLogger("videosegmenter")
 
 
@@ -122,7 +124,7 @@ class VidSegmenter:
         media.unlink()
         Path(str(media) + ".mp4").rename(str(media))
 
-    async def segment(self, media: Path, save_dir: Path) -> Path:
+    async def segment_old(self, media: Path, save_dir: Path) -> Path:
         """Segments a video file into smaller parts."""
 
         await self.sanitize_video(media)
@@ -144,6 +146,20 @@ class VidSegmenter:
         logger.debug(f"Ensuring segments are less than {self.max_size} Mb")
         await self.ensure_segments_size(out_path)
 
+        return out_path
+
+    async def segment(self, media: Path, save_dir: Path) -> Path:
+
+        out_path = save_dir / media.stem
+
+        out_path.mkdir(parents=True, exist_ok=True)
+        process = await asyncio.create_subprocess_exec(
+            BinPath.segmenter,
+            media,
+            out_path,
+            "25",
+        )
+        await process.communicate()
         return out_path
 
 

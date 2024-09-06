@@ -103,9 +103,29 @@ class VidSegmenter:
             retry = retry + 1
             await self.ensure_segments_size(outdir, retry)
 
+    async def sanitize_video(self, media: Path) -> None:
+        """Fix video having missing timestamp"""
+        ffmpeg = (
+            FFmpeg()
+            .option("y")
+            .input(str(media))
+            .output(
+                str(str(media) + ".mp4"),
+                codec="copy",
+            )
+        )
+        try:
+            await ffmpeg.execute()
+        except Exception as e:
+            logger.error(f"Error while sanitizing {media.name}", exc_info=e)
+            return
+        media.unlink()
+        Path(str(media) + ".mp4").rename(str(media))
+
     async def segment(self, media: Path, save_dir: Path) -> Path:
         """Segments a video file into smaller parts."""
 
+        await self.sanitize_video(media)
         duration, size = await self.get_video_duration_size(media)
         segment_duration = (duration / size) * self.max_size
 
@@ -128,9 +148,10 @@ class VidSegmenter:
 
 
 async def main():
-    input_file = Path("input.mp4")
+    input_file = Path("o.mp4")
     output_dir = Path("output")
     segmenter = VidSegmenter(max_size=20)
+
     await segmenter.segment(input_file, output_dir)
 
 

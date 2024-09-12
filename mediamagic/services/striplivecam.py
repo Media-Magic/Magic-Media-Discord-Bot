@@ -52,7 +52,8 @@ class NsfwLiveCam:
             "id": json["user"]["user"]["id"],
             "timestamp": json["user"]["user"]["snapshotTimestamp"],
             "master_url": f'https://edge-hls.doppiocdn.com/hls/{json["cam"]["streamName"]}/master/{json["cam"]["streamName"]}_auto.m3u8',
-            "hls_url": f'https://b-{json["cam"]["viewServers"]["flashphoner-hls"]}.doppiocdn.com/hls/{json["cam"]["streamName"]}/{json["cam"]["streamName"]}.m3u8',
+            # "hls_url": f'https://b-{json["cam"]["viewServers"]["flashphoner-hls"]}.doppiocdn.com/hls/{json["cam"]["streamName"]}/{json["cam"]["streamName"]}.m3u8',
+            "hls_url": f'https://b-hls-13.doppiocdn.live/hls/{json["cam"]["streamName"]}/{json["cam"]["streamName"]}.m3u8',
         }
 
     async def quality(self, master_url: str) -> Dict[int, str]:

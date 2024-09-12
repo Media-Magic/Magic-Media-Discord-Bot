@@ -150,6 +150,7 @@ class VidSegmenter:
 
     async def segment(self, media: Path, save_dir: Path) -> Path:
 
+        await self.sanitize_video(media)
         out_path = save_dir / media.stem
 
         out_path.mkdir(parents=True, exist_ok=True)

@@ -124,7 +124,7 @@ class VidSegmenter:
         media.unlink()
         Path(str(media) + ".mp4").rename(str(media))
 
-    async def segment_old(self, media: Path, save_dir: Path) -> Path:
+    async def segment(self, media: Path, save_dir: Path) -> Path:
         """Segments a video file into smaller parts."""
 
         await self.sanitize_video(media)
@@ -148,7 +148,7 @@ class VidSegmenter:
 
         return out_path
 
-    async def segment(self, media: Path, save_dir: Path) -> Path:
+    async def segment_v2_beta(self, media: Path, save_dir: Path) -> Path:
 
         await self.sanitize_video(media)
         out_path = save_dir / media.stem

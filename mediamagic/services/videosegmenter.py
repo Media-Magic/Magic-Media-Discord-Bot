@@ -125,6 +125,12 @@ class VidSegmenter:
         Path(str(media) + ".mp4").rename(str(media))
 
     async def segment(self, media: Path, save_dir: Path) -> Path:
+        """Wrapper for segment method, where versions can be changed manually"""
+        # res = await self.segment_v1(media, save_dir)
+        res = await self.segment_v2(media, save_dir)
+        return res
+
+    async def segment_v1(self, media: Path, save_dir: Path) -> Path:
         """Segments a video file into smaller parts."""
 
         await self.sanitize_video(media)
@@ -148,7 +154,7 @@ class VidSegmenter:
 
         return out_path
 
-    async def segment_v2_beta(self, media: Path, save_dir: Path) -> Path:
+    async def segment_v2(self, media: Path, save_dir: Path) -> Path:
 
         await self.sanitize_video(media)
         out_path = save_dir / media.stem
@@ -167,9 +173,9 @@ class VidSegmenter:
 async def main():
     input_file = Path("o.mp4")
     output_dir = Path("output")
-    segmenter = VidSegmenter(max_size=20)
+    segmenter = VidSegmenter(max_size=25)
 
-    await segmenter.segment(input_file, output_dir)
+    await segmenter.segment_v2(input_file, output_dir)
 
 
 if __name__ == "__main__":

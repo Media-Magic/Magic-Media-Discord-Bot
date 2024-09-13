@@ -207,7 +207,8 @@ class Upload(commands.Cog):
                             inter,
                             destination,
                             # For safe side we decrease discord file size limit by 1
-                            float((inter.guild.filesize_limit / 1024**2) - 1),
+                            # float((inter.guild.filesize_limit / 1024**2) - 1),
+                            float((inter.guild.filesize_limit / 1024**2)),
                             channel=channel,
                         )
                     except Exception as e:

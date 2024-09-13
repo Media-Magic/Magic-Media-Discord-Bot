@@ -76,7 +76,7 @@ class Recorder(commands.Cog):
             await self.uploadservice.upload(
                 inter,
                 Path(recorder.filename),
-                float((inter.guild.filesize_limit / 1024**2) - 1),
+                float((inter.guild.filesize_limit / 1024**2)),
             )
         except Exception as e:
             logger.error("Unable to upload", exc_info=e)

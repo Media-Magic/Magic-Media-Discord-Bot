@@ -71,7 +71,7 @@ class UploadService:
                 move_files_to_root(zip_path)
                 await self.upload(inter, zip_path, max_file_size, channel)
             except Exception as e:
-                logger.error(f"Bad Zip File!", exc_info=e)
+                logger.error("Bad Zip File!", exc_info=e)
                 file.unlink()
                 await aioshutil.rmtree(zip_path)
 
@@ -125,7 +125,10 @@ class UploadService:
                 logger.debug(f"Uploading zip {zip_files=} {max_file_size=}")
                 await self.upload_zip(inter, zip_files, max_file_size, channel)
             if to_segment:
-                logger.debug(f"Uploading segment {to_segment=} {dir=} {max_file_size=}")
+                logger.debug(
+                    f"Uploading segment {to_segment=} {
+                             dir=} {max_file_size=}"
+                )
                 await self.upload_segment(
                     inter, to_segment, dir, max_file_size, channel
                 )
@@ -143,6 +146,9 @@ class UploadService:
                         send = partial(inter.channel.send, files=file_grp)
                     await send()
                 except Exception as e:
-                    logger.error(f"Upload Failed {e} {sum(len_file)} {len_file=}")
+                    logger.error(
+                        f"Upload Failed {e} {
+                                 sum(len_file)} {len_file=}"
+                    )
 
             await aioshutil.rmtree(dir)

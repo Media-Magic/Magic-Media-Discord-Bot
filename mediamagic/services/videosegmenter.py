@@ -13,6 +13,7 @@ logger = logging.getLogger("videosegmenter")
 class VidSegmenter:
 
     def __init__(self, max_size: int | float):
+        print(self.max_size)
         self.max_size = max_size
 
     async def get_video_duration_size(self, video_path: Path) -> Tuple[float, float]:
@@ -60,7 +61,7 @@ class VidSegmenter:
         """Trims a video file into segments."""
         logger.debug(
             f"Trimming {media.name} to {
-                     segment_duration/60:.4f} mins"
+                segment_duration/60:.4f} mins"
         )
         ffmpeg = (
             FFmpeg()
@@ -144,7 +145,7 @@ class VidSegmenter:
         if size <= self.max_size:
             raise ValueError(
                 f"Video Size is Already less than {
-                             self.max_size} Mb"
+                    self.max_size} Mb"
             )
         elif segment_duration <= 0:
             raise ValueError("Max Size Is Too Low")

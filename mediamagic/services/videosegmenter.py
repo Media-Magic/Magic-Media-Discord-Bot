@@ -58,8 +58,10 @@ class VidSegmenter:
         file_name: str = "%03d.mp4",
     ) -> None:
         """Trims a video file into segments."""
-        logger.debug(f"Trimming {media.name} to {
-                     segment_duration/60:.4f} mins")
+        logger.debug(
+            f"Trimming {media.name} to {
+                     segment_duration/60:.4f} mins"
+        )
         ffmpeg = (
             FFmpeg()
             .option("y")
@@ -140,8 +142,10 @@ class VidSegmenter:
         segment_duration = (duration / size) * self.max_size
 
         if size <= self.max_size:
-            raise ValueError(f"Video Size is Already less than {
-                             self.max_size} Mb")
+            raise ValueError(
+                f"Video Size is Already less than {
+                             self.max_size} Mb"
+            )
         elif segment_duration <= 0:
             raise ValueError("Max Size Is Too Low")
 

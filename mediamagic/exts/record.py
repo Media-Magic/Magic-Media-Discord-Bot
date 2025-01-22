@@ -65,18 +65,17 @@ class Recorder(commands.Cog):
         logger.info(f"Recording {model}")
         try:
             await recorder.record_stream()
-        except Exception as e:
+        except Exception:
             logger.warning("Error occured in record stream")
             await recorder.stop_recording()
         await inter.channel.send(
             f"Stream Duration: {(time.perf_counter() - start)/60:.2f}", delete_after=5
         )
         try:
-
             await self.uploadservice.upload(
                 inter,
                 Path(recorder.filename),
-                float((inter.guild.filesize_limit / 1024**2)),
+                float(inter.guild.filesize_limit / 1024**2),
             )
         except Exception as e:
             logger.error("Unable to upload", exc_info=e)

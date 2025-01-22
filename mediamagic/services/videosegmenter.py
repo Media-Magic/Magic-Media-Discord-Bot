@@ -12,8 +12,7 @@ logger = logging.getLogger("videosegmenter")
 
 class VidSegmenter:
 
-    def __init__(self, max_size: int | float):
-        print(self.max_size)
+    def __init__(self, max_size: int):
         self.max_size = max_size
 
     async def get_video_duration_size(self, video_path: Path) -> Tuple[float, float]:
@@ -173,7 +172,7 @@ class VidSegmenter:
             BinPath.segmenter,
             media,
             out_path,
-            str(self.max_size),
+            str(int(self.max_size)),
         )
         await process.communicate()
         return out_path

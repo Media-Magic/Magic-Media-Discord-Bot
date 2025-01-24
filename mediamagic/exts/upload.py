@@ -42,14 +42,19 @@ class Upload(commands.Cog):
             try:
                 await func()
             except Exception as e:
-                logger.error(f"Consumer of {guild_id} got exception", exc_info=e)
+                logger.error(
+                    f"Consumer of {
+                             guild_id} got exception",
+                    exc_info=e,
+                )
             finally:
                 self.queue.task_done()
         self.active_producer.remove(guild_id)
         if inter is not None:
             try:
                 await inter.author.send(
-                    f"Upload completed in {inter.channel.mention}",  # type: ignore
+                    f"Upload completed in {
+                        inter.channel.mention}",  # type: ignore
                     allowed_mentions=disnake.AllowedMentions(),
                 )
             finally:
@@ -82,7 +87,8 @@ class Upload(commands.Cog):
         else:
             await channel_or_category.edit(nsfw=value)
         await inter.send(
-            f"{channel_or_category.mention} is now {'' if value else 'not'} age-restriced!",
+            f"{channel_or_category.mention} is now {
+                '' if value else 'not'} age-restriced!",
         )
 
     @commands.slash_command(name="upload", dm_permission=False)
@@ -208,7 +214,7 @@ class Upload(commands.Cog):
                             destination,
                             # For safe side we decrease discord file size limit by 1
                             # float((inter.guild.filesize_limit / 1024**2) - 1),
-                            float((inter.guild.filesize_limit / 1024**2)),
+                            int((inter.guild.filesize_limit / 1024**2)),
                             channel=channel,
                         )
                     except Exception as e:
@@ -226,7 +232,7 @@ class Upload(commands.Cog):
             logger.debug(f"Queued {len(url)} urls in _dwnld")
             await self.queue.put((func, inter.guild.id, inter))  # Producer
         # Create consumer task for this guild and put it in active producer set
-        if not inter.guild.id in self.active_producer:
+        if not (inter.guild.id in self.active_producer):
             self.active_producer.add(inter.guild.id)
             asyncio.create_task(self.consumer(inter.guild.id))
 

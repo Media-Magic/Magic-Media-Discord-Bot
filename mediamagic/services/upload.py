@@ -20,7 +20,7 @@ class UploadService:
         self,
         inter: Union[disnake.Interaction, commands.Context],
         file: Path,
-        max_file_size: float,
+        max_file_size: int,
         channel: Optional[Union[disnake.TextChannel, disnake.ThreadWithMessage]] = None,
     ) -> None:
         try:
@@ -39,7 +39,7 @@ class UploadService:
         self,
         inter: Union[disnake.Interaction, commands.Context],
         zip_files: Iterable[Path],
-        max_file_size: float,
+        max_file_size: int,
         channel: Optional[Union[disnake.TextChannel, disnake.ThreadWithMessage]] = None,
     ) -> None:
         zip_path = Path(str(uuid4()))
@@ -60,7 +60,7 @@ class UploadService:
         self,
         inter: Union[disnake.Interaction, commands.Context],
         zip_files: Iterable[Path],
-        max_file_size: float,
+        max_file_size: int,
         channel: Optional[Union[disnake.TextChannel, disnake.ThreadWithMessage]] = None,
     ) -> None:
         zip_path = Path(str(uuid4()))
@@ -80,7 +80,7 @@ class UploadService:
         inter: Union[disnake.Interaction, commands.Context],
         to_segment: Union[List, Set],
         dir: Path,
-        max_file_size: float,
+        max_file_size: int,
         channel: Optional[Union[disnake.TextChannel, disnake.ThreadWithMessage]] = None,
     ) -> None:
         logger.info(f"{len(to_segment)} files found which are more than 25mb detected")
@@ -97,10 +97,11 @@ class UploadService:
         self,
         inter: Union[disnake.Interaction, commands.Context],
         dir: Path,
-        max_file_size: float,
+        max_file_size: int,
         channel: Optional[Union[disnake.TextChannel, disnake.ThreadWithMessage]] = None,
     ) -> None:
         """Generic Function for upload"""
+        max_file_size = 10  # discord api didn't updated file size limit on api
         logger.debug(f"Upload started {dir=} {max_file_size=}")
         if dir.is_file():
             logger.debug(f"Uploading file {dir=} {max_file_size=}")
@@ -127,7 +128,7 @@ class UploadService:
             if to_segment:
                 logger.debug(
                     f"Uploading segment {to_segment=} {
-                             dir=} {max_file_size=}"
+                        dir=} {max_file_size=}"
                 )
                 await self.upload_segment(
                     inter, to_segment, dir, max_file_size, channel
@@ -148,7 +149,7 @@ class UploadService:
                 except Exception as e:
                     logger.error(
                         f"Upload Failed {e} {
-                                 sum(len_file)} {len_file=}"
+                            sum(len_file)} {len_file=}"
                     )
 
             await aioshutil.rmtree(dir)
